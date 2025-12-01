@@ -19,7 +19,7 @@ def home():
 @app.route('/about')
 def about():
     """About page route."""
-    return "I am still working on this"
+    return render_template("about.html")
 
 
 @app.route('/search', methods=['POST', 'GET'])
@@ -34,9 +34,14 @@ def search():
 @app.route('/results')
 def results():
     """Results page route. Render the search results."""
+    if 'search_term' not in session:
+        return redirect(url_for('search'))
     search_term = session['search_term']
-    page = get_page(search_term)
-    return render_template("results.html", page=page)
+    try:
+        page = get_page(search_term)
+        return render_template("results.html", page=page)
+    except Exception as e:
+        return render_template("results.html", page=None, message=str(e))
 
 
 def get_page(search_term):
@@ -61,3 +66,4 @@ def get_page(search_term):
 
 if __name__ == '__main__':
     app.run()
+
